@@ -4,8 +4,7 @@ Replication archive for "Exponential random graph models for exclusive multi-aff
 
 ## Contents
 - `software/ergm.exclusive/`: R package with the exclusive-affiliation terms, the typed and grouped swap proposals and the compiled sampler `ex_fast_simulate()`. Install with `R CMD INSTALL software/ergm.exclusive` (needs `ergm` >= 4.12, `network`, a C compiler).
-- `software/nwergm-tripartite/`: development fork of the Stata package `nwergm` (**not the released nwergm; do not install it alongside it; needs the Stata package `nwcommands` >= 3.6.0**, see its README).
-- `enrichment/analysis/`: analysis scripts (R and Stata), `sim/` for the simulation study (generators, fits, summaries, simulated-world inputs and result summaries).
+- `enrichment/analysis/`: R analysis scripts; `sim/` holds the simulation-study world definitions (`sim_world*.R`), the R fits and permutation tests, the summaries and the result summaries (`sim/results/`).
 - `enrichment/analysis/output/tp/`: the football network and covariates (compressed, see Data), starting values and result files (`rrefine/`, `fastval/`, `gof/`, `proj/`, `recover*/`).
 - `paper/figures/`, `paper/tables/`: scripts for the figures and the generated tables of the paper.
 - `enrichment/*.py`: the scraper and table builders for the raw data (see Data).
@@ -18,10 +17,10 @@ The estimation inputs are the derived network and covariates (the football snaps
 2. Diagnostics and fit by agency size: `fast_validate.R` (four chains of 200 draws) -> `output/tp/fastval/`; tables via `ergm_excl_diag_fast_tex.R`.
 3. Projection analyses of the football network: `football_projection.R` -> `output/tp/proj/`.
 4. Recovery at the scale of the application: `ergm_excl_recover_fast.R` (env `REP` = 1..24) -> `output/tp/recover_fast*/`; table via `ergm_excl_recover_tex.R`.
-5. Simulation study: `enrichment/analysis/sim/` (`run_sim.sh`, `run_s5.sh`, `run_s6.sh`, `sim_fit_r.R`, `sim_summarise.R`; Stata do-files need `software/nwergm-tripartite` and `nwcommands`).
+5. Simulation study: summaries in `enrichment/analysis/sim/results/` are processed by `sim_summarise.R`; the permutation tests and R fits are `sim_perm_country.R` and `sim_fit_r.R` (generating worlds: `sim_world*.R`). The joint-model fits of the simulation study were produced with an earlier Stata implementation of the same model, which is not distributed here; their result files are included.
 6. Figures: `Rscript paper/figures/make_figures.R`, `make_fig_patterns.R`.
 
-Seeds are fixed in each script. Stata do-files take their paths from the working directory, so start Stata from the repository root.
+Seeds are fixed in each script. All scripts run from the repository root.
 
 ## Licenses
-Scripts: MIT (`LICENSE`). Packages in `software/`: GPL-3 (see their folders).
+Scripts: MIT (`LICENSE`). R package in `software/`: GPL-3 (see `software/ergm.exclusive`).

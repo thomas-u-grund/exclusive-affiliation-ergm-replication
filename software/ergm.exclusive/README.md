@@ -23,8 +23,8 @@ Status (development version; the sampler is verified against exact enumeration, 
   * `acov(W)`: sum over players of W[agency, club], an agency-club covariate (corridor, value gap, market presence).
 * **Football example** (the paper's models (1), (3m), (3s)): `enrichment/analysis/ergm_excl_data.R` (loader),
   `ergm_excl_terms.R` (formulas), `ergm_excl_fit.R` and `ergm_excl_check2.R` (fit and moment check) in the project
-  directory (the data are not distributed). On the 4,445-node network: simulation at the Stata estimates reproduces all
-  observed statistics for model (3m); `ergm()` started from the Stata estimates reproduces the size model within standard errors.
+  directory (the data are not distributed). On the 4,445-node network: simulation at the fitted estimates reproduces all
+  observed statistics for model (3m); `ergm()` started from the fitted estimates reproduces the size model within standard errors.
   The sampler mixes slowly (about 10^6 swaps per independent draw): use `MCMC.interval` of 1e6 and expect hours per fit.
 
 Install from source: `R CMD INSTALL .` (needs `ergm` >= 4.12 and a C compiler). Maintainer email in `DESCRIPTION` is a placeholder.

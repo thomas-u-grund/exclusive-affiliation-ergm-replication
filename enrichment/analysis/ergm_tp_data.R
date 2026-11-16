@@ -108,7 +108,7 @@ ac_val <- abs(ag$ag_mv[gac$a] - clubs$club_mv[gac$c])
 ac_val[ag$ag_mv_missing[gac$a]] <- NA
 wcov("ac_val", NP + gac$a, NP + NA_ + gac$c, mean_or(ac_val))
 
-# ---------------------------------------------------------------- observed statistics (for checking the Stata side)
+# ---------------------------------------------------------------- observed statistics (for checking)
 co_ag <- pp |> count(agency, name = "n") |> summarise(s = sum(choose(n, 2))) |> pull(s)
 stack <- pp |> count(agency, club_id, name = "n") |> summarise(s = sum(choose(n, 2))) |> pull(s)
 coloc <- pp |> count(agency, country, name = "n") |> summarise(s = sum(choose(n, 2))) |> pull(s)
