@@ -1,6 +1,6 @@
 """
 Collect player- and agency-level enrichment data from Transfermarkt for the
-players in Milan Dittrich's BA snapshot (snapshot_2026-08-24).
+players in the data snapshot (snapshot_2026-08-24).
 
 Sources (one cached raw file per request; reruns skip what is cached):
   player    tmapi-alpha.transfermarkt.technology/player/{id}                 -> DOB, nationalities, contract, joined, agency, MV current/previous/peak

@@ -24,7 +24,8 @@ nl <- nul |> group_by(stat, band) |> summarise(m = mean(v), lo = quantile(v, .02
 lab <- c(A = "Nationality sorting:\nco-client pairs of the\nsame nationality", B = "Market concentration:\nclients in the agency's\nmain club country", C = "Stacking:\nco-client pairs at the\nsame club")
 pl <- \(s) ggplot() + geom_linerange(data = filter(nl, stat == s), aes(band, ymin = lo, ymax = hi), colour = "grey60", linewidth = 3.5, alpha = .6) +
   geom_point(data = filter(obs, stat == s), aes(band, v), colour = pal["ink"], size = 2) +
-  scale_y_continuous(labels = scales::label_percent(accuracy = 1), limits = c(0, NA)) + labs(x = "Clients of the agency in the network", y = NULL, subtitle = lab[[s]]) +
+  scale_y_continuous(labels = scales::label_percent(accuracy = 1), limits = c(0, NA)) + labs(x = NULL, y = NULL, subtitle = lab[[s]]) +
   theme(plot.subtitle = element_text(colour = "grey15", size = 8))
-g <- (pl("A") | pl("B") | pl("C")) + plot_annotation(tag_levels = "A", caption = "Points = observed; grey bars = 95% range under random reassignment of nationalities (A) or of clubs (B, C) among players, 200 draws.", theme = theme(plot.caption = element_text(colour = "grey35", hjust = 0)))
+xl <- patchwork::wrap_elements(full = grid::textGrob("Clients of the agency in the network", gp = grid::gpar(fontsize = 10, col = "grey25")))
+g <- ((pl("A") | pl("B") | pl("C")) / xl + plot_layout(heights = c(1, 0.07))) + plot_annotation(tag_levels = list(c("A", "B", "C", "")), caption = "Points = observed; grey bars = 95% range under random reassignment of nationalities (A) or of clubs (B, C) among players, 200 draws.", theme = theme(plot.caption = element_text(colour = "grey35", hjust = 0)))
 ggsave("paper/figures/fig_patterns.pdf", g, width = 6.5, height = 3.2, device = cairo_pdf); print(obs |> pivot_wider(names_from = band, values_from = v), width = 120)

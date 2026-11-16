@@ -1,7 +1,7 @@
 """Club -> country map from the cached career data (raw/perf/*.json.gz), standard library only.
 
 Domestic league matches (competitionTypeId 1-6 = tier, not national-team games) link a competition to both clubs. Seed: the clubs of
-Milan's snapshot leagues (player_attributes.csv: snapshot_club_id, market_id such as germany_2). Propagation: a
+The snapshot leagues (player_attributes.csv: snapshot_club_id, market_id such as germany_2). Propagation: a
 competition's country is the majority country of its clubs with a known country; every club playing league games in
 a competition with a known country gets that country (majority over its competitions). Repeated until stable.
 Output: enrichment/output/club_country.csv (club_id, country, n_league_games, source).
