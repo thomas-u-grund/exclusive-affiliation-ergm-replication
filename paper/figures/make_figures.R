@@ -83,7 +83,7 @@ one <- function(st, lab) ggplot(filter(sg, stat == st), aes(model, m, colour = m
        axis.ticks.x = element_blank(), panel.grid.major.x = element_blank())
 pg <- (one(lab_stat[["S"]], "Co-client pairs at the same club") / one(lab_stat[["L"]], "Co-client pairs at clubs in the same country")) +
   plot_layout(guides = "collect") & theme(legend.position = "top")
-pg <- pg + plot_annotation(caption = "Black line = observed network; points and ranges = mean and 95% range of 50 networks simulated from each fitted model.",
+pg <- pg + plot_annotation(caption = "Black line = observed network; points and ranges = mean and 95% range of 800 networks simulated from each fitted model.",
                            theme = theme(plot.caption = element_text(colour = "grey35", hjust = 0)))
 ggsave(file.path(out, "fig_gof_size.pdf"), pg, width = 6.5, height = 4.2, device = cairo_pdf)
 cat("models in GOF figure:", levels(sg$model), "\n")
