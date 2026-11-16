@@ -1,6 +1,6 @@
 # Replication materials: exponential random graph models for exclusive multi-affiliation networks
 
-Replication archive for "Exponential random graph models for exclusive multi-affiliation networks: agencies, players and clubs in European football" (Grund).
+Replication archive for "Exponential random graph models for exclusive multi-affiliation networks: agencies, players and clubs in European football".
 
 ## Contents
 - `software/ergm.exclusive/`: R package with the exclusive-affiliation terms, the typed and grouped swap proposals and the compiled sampler `ex_fast_simulate()`. Install with `R CMD INSTALL software/ergm.exclusive` (needs `ergm` >= 4.12, `network`, a C compiler).
