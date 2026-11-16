@@ -59,7 +59,7 @@ ggsave(file.path(out, "fig_recovery.pdf"), (pa / pb) + plot_layout(heights = c(1
        width = 6.5, height = 7.6, device = cairo_pdf)
 
 # ---- Figure: goodness of fit by agency size -----------------------------------------------------------------------
-fits <- c("1" = "Model 1", "3mb" = "Model 2", "3ms22b" = "Model 3", "3s3" = "Model 4")
+fits <- c("3mb" = "Model 1", "3ms22b" = "Model 2", "3s3" = "Model 3")
 g <- imap_dfr(fits, \(lab, f) { p <- file.path(tp, "gof", paste0("gof_", f, ".csv")); if (file.exists(p)) read_csv(p, show_col_types = FALSE) |> mutate(model = lab) })
 bands <- c("2-3", "4-9", "10-29", "30+")
 long <- g |> filter(sim > 0) |> pivot_longer(c(starts_with("S_"), starts_with("L_")), names_to = "k", values_to = "v") |>
