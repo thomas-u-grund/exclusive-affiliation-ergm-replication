@@ -3,7 +3,7 @@
 suppressMessages({library(tidyverse); library(patchwork); library(network)})
 source("enrichment/analysis/ergm_excl_data.R")
 pal <- c(blue = "#2a78d6", ink = "#1a1a19")
-theme_set(theme_minimal(base_size = 8.5, base_family = "Helvetica") + theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(),
+theme_set(theme_minimal(base_size = 10, base_family = "Helvetica") + theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(),
   panel.grid.major.y = element_line(colour = "grey88", linewidth = 0.3), axis.text = element_text(colour = "grey25"), axis.title = element_text(colour = "grey25"),
   strip.text = element_text(colour = "grey15", hjust = 0), legend.position = "top", legend.title = element_blank(), plot.tag = element_text(face = "bold")))
 B <- network::as.sociomatrix(fb$net); n1 <- fb$n1

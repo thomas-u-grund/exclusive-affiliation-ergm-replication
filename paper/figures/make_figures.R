@@ -5,7 +5,7 @@
 # Shapes differ by series so the figures survive grayscale printing; text uses text colours, never series colours.
 suppressMessages({library(tidyverse); library(patchwork)})
 pal <- c(blue = "#2a78d6", orange = "#eb6834", aqua = "#1baf7a", ink = "#1a1a19", violet = "#7a4fd1")
-theme_set(theme_minimal(base_size = 8.5, base_family = "Helvetica") +
+theme_set(theme_minimal(base_size = 10, base_family = "Helvetica") +
   theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(),
         panel.grid.major.y = element_line(colour = "grey88", linewidth = 0.3),
         axis.text = element_text(colour = "grey25"), axis.title = element_text(colour = "grey25"),
@@ -52,11 +52,11 @@ pb <- ggplot(sm, aes(model, m, colour = model, shape = model)) +
   geom_linerange(aes(ymin = lo, ymax = hi), linewidth = 0.6) + geom_point(size = 2) +
   facet_wrap(~panel, nrow = 1, scales = "free_x") +
   scale_colour_manual(values = cols) + scale_shape_manual(values = shp) +
-  scale_x_discrete(labels = NULL) + labs(x = NULL, y = "Estimate: mean and central 95% of fits",
+  scale_x_discrete(labels = NULL) + labs(x = NULL, y = "Estimate: mean and 95% range",
        subtitle = "Dashed line = generating value") + theme(plot.subtitle = element_text(colour = "grey35"),
        legend.direction = "vertical", axis.ticks.x = element_blank(), panel.grid.major.x = element_blank())
-ggsave(file.path(out, "fig_recovery.pdf"), (pa / pb) + plot_layout(heights = c(1.4, 1)) + plot_annotation(tag_levels = "A"),
-       width = 6.5, height = 7.6, device = cairo_pdf)
+ggsave(file.path(out, "fig_recovery_a.pdf"), pa, width = 6.5, height = 4.0, device = cairo_pdf)
+ggsave(file.path(out, "fig_recovery_b.pdf"), pb, width = 6.5, height = 4.6, device = cairo_pdf)
 
 # ---- Figure: goodness of fit by agency size -----------------------------------------------------------------------
 fits <- c("3mb" = "Model 1", "3ms22b" = "Model 2", "3s3" = "Model 3")
