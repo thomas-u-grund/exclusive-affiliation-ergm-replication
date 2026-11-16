@@ -1,0 +1,18 @@
+Package: ergm.exclusive
+Type: Package
+Title: Exponential Random Graph Models for Exclusive Multi-Affiliation Networks
+Version: 0.0.0.9000
+Authors@R: person("Thomas U.", "Grund", role = c("aut", "cre"), email = "maintainer@example.org")
+Description: Exponential random graph models for networks in which every actor holds exactly one affiliation of each of
+    several types (for example one agency and one club), with the size of every affiliation fixed. The package provides
+    the typed-swap Metropolis-Hastings sampler on this sample space, statistics that link the affiliation types through
+    the actors, exact enumeration of small networks, and benchmarks that check the sampler against the exact
+    distribution. Development version; see the companion paper for the model.
+License: GPL-3
+Encoding: UTF-8
+Depends: ergm
+Imports: stats, network
+LinkingTo: ergm
+Suggests: testthat (>= 3.0.0)
+Config/testthat/edition: 3
+RoxygenNote: 8.0.0

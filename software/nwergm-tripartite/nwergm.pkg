@@ -1,0 +1,55 @@
+v 3
+d nwergm-tripartite (development version for exclusive multi-affiliation networks; not the released nwergm). Exponential random graph models (ERGM; MPLE, MCMLE, simulation, GOF) for networks declared with nwset
+d Thomas U. Grund, RWTH Aachen University, www.grund.co.uk
+d GPL-3. Requires the core package nwcommands 3.6.0 or later.
+d Requires nwcommands (core), version 3.6.0 or later
+d Version: 1.5.3
+d Distribution-Date: 09nov2026
+f _nwergm_bip.ado
+f _nwergm_bip_curved.ado
+f _nwergm_bipgof.ado
+f _nwergm_coeflabel.ado
+f _nwergm_dlgprep.ado
+f _nwergm_constr.ado
+f _nwergm_cov.ado
+f _nwergm_est.ado
+f _nwergm_fitstats.ado
+f _nwergm_getb.ado
+f _nwergm_gof.ado
+f _nwergm_gofplot.ado
+f _nwergm_hints.ado
+f _nwergm_mcdiag.ado
+f _nwergm_miss.ado
+f _nwergm_slowwarn.ado
+f _nwergm_libcheck.ado
+f _nwergm_ops.ado
+f _nwergm_simfit.ado
+f _nwergm_statop.ado
+f _nwergm_struct.ado
+f nwergm.ado
+f nwergm_version.ado
+f nwergm_estat.ado
+f nwergm_p.ado
+f nwergm.sthlp
+f nwergm_bipartite.sthlp
+f nwergm_constraints.sthlp
+f nwergm_covterms.sthlp
+f nwergm_estat.sthlp
+f nwergm_estimation.sthlp
+f nwergm_fit.sthlp
+f nwergm_operators.sthlp
+f nwergm_structural.sthlp
+f nwergm.dlg
+f nwergm_simulate.dlg
+f nwergm_estat.dlg
+f lib/lnwergm.mlib
+f lib/plugins/macos/ergm_mcmc_macos.plugin
+f lib/plugins/windows/ergm_mcmc_windows.plugin
+f lib/plugins/unix/ergm_mcmc_unix.plugin
+f native/ergm_mcmc.c
+f native/ergm_mcmc_e6.h
+f native/ergm_struct.h
+f native/Makefile
+f native/spi/stplugin.c
+f native/spi/stplugin.h
+f ergm_native_readme.txt

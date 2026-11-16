@@ -1,0 +1,173 @@
+*! version 1.5.3  09nov2026 _nwergm_simfit.ado -- nwergm simulate from the last fit (R: simulate.ergm)
+* Copyright (C) 2026 Thomas U. Grund
+* This file is part of nwergm, a Stata package derived from the R package 'ergm (statnet)' (Mark S. Handcock, David R. Hunter, Carter T. Butts, Steven M. Goodreau, Pavel N. Krivitsky, Martina Morris and contributors; GPL-3 (+ file LICENSE)).
+* nwergm is free software: you can redistribute it and/or modify it under the terms of the GNU General
+* Public License, version 3, as published by the Free Software Foundation. It is distributed in the hope
+* that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+* or FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE for the full text.
+capture program drop _nwergm_simfit
+program _nwergm_simfit, rclass
+	version 14
+	_nwergm_libcheck
+	syntax [, NSIM(integer 1) SEED(integer -1) OUTput(string) BASIS(string) NOSEQuential ///
+		BURNin(integer -1) INTERval(integer -1) GENerate(string) COEF(string) CLEAR]
+	if `"`e(cmd)'"' != "nwergm" {
+		di as err "last nwergm estimates not found"
+		exit 301
+	}
+	capture mata: __nwergm_last_G.n
+	if _rc {
+		di as err "no fitted nwergm model available for simulation - re-run nwergm first."
+		exit 498
+	}
+	if `nsim' < 1 {
+		di as err "option nsim() must be at least 1."
+		exit 198
+	}
+	if "`output'" == "" local output "network"
+	local output = lower("`output'")
+	_opts_oneof "network stats edgelist" "output" "`output'" 198
+	if "`output'" == "edgelist" & "`clear'" == "" {
+		di as err "output(edgelist) replaces the data in memory; specify {bf:clear}."
+		exit 198
+	}
+	if "`generate'" == "" local generate "sim"
+	if `seed' != -1 set seed `seed'
+	if `burnin' < 0 {
+		local burnin = 16384
+		if "`e(mcmc_burnin)'" != "" local burnin = e(mcmc_burnin)
+	}
+	if `interval' < 0 {
+		local interval = 1024
+		if "`e(mcmc_interval_final)'" != "" local interval = e(mcmc_interval_final)
+		else if "`e(mcmc_interval)'" != "" local interval = e(mcmc_interval)
+	}
+	local dir = ("`e(directed)'" == "true")
+	local nodes = e(nodes)
+
+	tempname bmat
+	if "`coef'" != "" {
+		capture confirm matrix `coef'
+		if _rc {
+			di as err "coef(): matrix `coef' not found."
+			exit 111
+		}
+		matrix `bmat' = `coef'
+		if colsof(`bmat') != colsof(e(b)) {
+			di as err "coef() needs " colsof(e(b)) " values, one per coefficient."
+			exit 198
+		}
+	}
+	else _nwergm_getb `bmat'
+
+	// starting network: the fit's last network (R: newnetwork) unless basis() is given
+	// node names of the draws: node i of the chain is node i of the basis (or of the fitted network), in the order the
+	// network stores its nodes, which need not be n1, n2, ... (lazega: n1, n10, n11, ...); the draws get these names
+	tempname A0 Afit
+	local __namesrc "`e(depvar)'"
+	if "`basis'" != "" local __namesrc "`basis'"
+	if "`basis'" != "" {
+		capture _nwsyntax `basis', max(1)
+		if _rc {
+			di as err "network `basis' not found."
+			exit 498
+		}
+		if `nodes' != e(nodes) | ("`directed'"=="true") != `dir' {
+			di as err "basis(): network `basis' must have the nodes and directedness of the fitted network."
+			exit 498
+		}
+		tempname bG
+		mata: `bG' = ErgmGraph()
+		mata: `bG'.init(`nodes', `dir')
+		mata: ergm_bridge_obs(`netobj', `bG', `dir')
+		mata: `A0' = `bG'.to_dense()
+		mata: mata drop `bG'
+	}
+	else mata: `A0' = __nwergm_last_G.to_dense()
+	local __simlabs ""
+	if "`__namesrc'" != "" {
+		capture _nwsyntax `__namesrc', max(1)
+		if !_rc & `nodes' == e(nodes) {
+			tempname NM
+			mata: `NM' = (`netobj'->get_nodenames())[1..`nodes']
+			// two-mode: nwset takes the first mode first
+			mata: `NM' = `NM'[__nwergm_last_G.bipartite ? (__nwergm_last_G.mode1nodes \ __nwergm_last_G.mode2nodes)' : (1..`nodes')]
+			mata: st_local("__simlabs", invtokens(`NM', ","))
+			mata: mata drop `NM'
+		}
+		// _nwsyntax resets the local nodes
+		local nodes = e(nodes)
+	}
+
+	mata: st_local("__hasmask", strofreal(__nwergm_last_G.has_dyadmask))
+	if e(trifocus) < . {
+		local propfn "&ergm_propose_spdyad()"
+		mata: __nwergm_last_G.spd_focus = `=e(trifocus)'
+	}
+	else if `__hasmask' {
+		if "`e(proposal)'" == "tnt" local propfn "&ergm_propose_tnt_masked()"
+		else local propfn "&ergm_propose_uniform_masked()"
+	}
+	else if "`e(proposal)'" == "uniform" local propfn "&ergm_propose_uniform()"
+	else local propfn "&ergm_propose_tnt()"
+	local want = cond("`output'" == "network", 1, cond("`output'" == "edgelist", 2, 0))
+	local seq = ("`nosequential'" == "")
+	if !`seq' & "`basis'" == "" {
+		// R: without sequential, each draw starts again from the basis
+	}
+	mata: st_local("__snat", strofreal(__nwergm_last_M.native_enabled_sample))
+	if !`__snat' _nwergm_slowwarn "the simulation" "fit"
+	tempname nets
+	// the chain starts at the basis (R: simulate(basis = ...)) or at the fit's last network (R: the fit's newnetwork).
+	// Afterwards the fit's network is put back exactly, tie order included: the chain changes the network the fit
+	// leaves behind, and the order of its ties steers the TNT proposal, so without this a second simulation with the
+	// same seed() gave other draws (and, without basis(), continued from where the first one ended)
+	mata: `Afit' = __nwergm_last_G.all_ties()
+	if "`basis'" != "" mata: ergm_reset_graph(__nwergm_last_G, `A0')
+	mata: `nets' = ergm_sim_run(__nwergm_last_M, __nwergm_last_G, `A0', st_matrix("`bmat'"), `nsim', `burnin', `interval', `propfn', `seq', `want', "__simE7")
+	mata: ergm_graph_set_ties(__nwergm_last_G, `Afit')
+	mata: mata drop `Afit'
+	tempname S
+	matrix `S' = __simE7_stats
+	matrix drop __simE7_stats
+	mata: st_local("cn", invtokens(__nwergm_last_M.coefnames))
+	matrix colnames `S' = `cn'
+	return matrix stats = `S'
+	if "`output'" == "network" {
+		// a two-mode fit simulates two-mode networks (R: simulate() returns a bipartite network): nwset wants the
+		// rectangular mode-2 x mode-1 incidence matrix (its columns are the first mode), not the n x n adjacency
+		mata: st_local("__sbip", strofreal(__nwergm_last_G.bipartite))
+		forvalues s = 1/`nsim' {
+			tempname M1
+			if `__sbip' mata: st_matrix("`M1'", asarray(`nets', `s')[__nwergm_last_G.mode2nodes, __nwergm_last_G.mode1nodes])
+			else mata: st_matrix("`M1'", asarray(`nets', `s'))
+			local nm = cond(`nsim' == 1, "`generate'", "`generate'_`s'")
+			capture nwdrop `nm'
+			preserve
+			qui drop _all
+			qui set obs `nodes'
+			local __lb = cond(`"`__simlabs'"' != "", `"labs(`__simlabs')"', "")
+			if `__sbip' nwset, mat(`M1') bipartite name(`nm') nooutput `__lb'
+			else nwset, mat(`M1') `=cond(`dir',"directed","undirected")' name(`nm') nooutput `__lb'
+			restore
+		}
+		di as txt "(`nsim' simulated network(s) created: `generate'" cond(`nsim' > 1, "_1 ... `generate'_`nsim'", "") ")"
+	}
+	else if "`output'" == "edgelist" {
+		tempname EL
+		matrix `EL' = __simE7_el
+		matrix drop __simE7_el
+		qui drop _all
+		qui svmat double `EL', names(col)
+		capture rename c1 _sim
+		capture rename c2 _tail
+		capture rename c3 _head
+		if _N == 0 {
+			qui set obs 0
+		}
+	}
+	capture mata: mata drop `nets' `A0'
+	return scalar nsim = `nsim'
+	return scalar burnin = `burnin'
+	return scalar interval = `interval'
+end

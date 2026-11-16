@@ -1,0 +1,2 @@
+scen,rep,fitted,seconds,converged,iterations,interval,b_edges,se_edges,b_b1dsp2,se_b1dsp2,b_b1nodematch_nat_1,se_b1nodematch_nat_1,b_b1nodematch_nat_2,se_b1nodematch_nat_2,b_tpcoloc_key_cty,se_tpcoloc_key_cty,b_tpstarcov_ac_home,se_tpstarcov_ac_home,b_tpstarcov_ac_mkt,se_tpstarcov_ac_mkt,b_edgecov_pc_home,se_edgecov_pc_home,b_edgecov_ap_spec,se_edgecov_ap_spec
+5,22,1,65.874001,1,2,16384,0,0,.011989654,.040024903,.035181444,.0035482096,.12485132,.011605818,.0085947663,.006737371,-.022239136,.10425379,1.6467276,.084228098,.73333526,.11593472,2.0453873,.080623887

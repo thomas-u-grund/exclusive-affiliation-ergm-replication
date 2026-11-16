@@ -1,0 +1,30 @@
+% Schematic of the three-layer model and the typed swap (TikZ). Included from main.tex.
+\begin{figure}[t]\centering
+\newcommand{\layer}[1]{\node[anchor=east,font=\footnotesize\itshape,text=black!65] at (-0.55,#1) }
+\def\drawlayers{%
+  \layer{2}{agencies}; \layer{0}{players}; \layer{-2}{clubs};
+  \foreach \i/\x in {1/0.5,2/2.5,3/4.5} { \node[draw,rectangle,minimum size=5mm,inner sep=0,fill=black!6] (a\i) at (\x,2) {\scriptsize A\i}; }
+  \foreach \i/\x in {1/0,2/1.25,3/2.5,4/3.75,5/5} { \node[draw,circle,minimum size=5mm,inner sep=0] (p\i) at (\x,0) {\scriptsize p\i}; }
+  \foreach \i/\x in {1/0.5,2/2.5,3/4.5} { \node[draw,diamond,aspect=1.6,inner sep=1pt,fill=black!6] (c\i) at (\x,-2) {\scriptsize C\i}; }
+  \foreach \p/\c in {1/1,2/2,3/1,4/2,5/3} { \draw[black!45,line width=0.5pt] (p\p) -- (c\c); }
+}
+\begin{minipage}[t]{0.49\linewidth}\centering
+\begin{tikzpicture}[x=0.78cm,y=0.78cm]
+  \drawlayers
+  \foreach \p/\a in {1/1,2/1,3/2,4/3,5/3} { \draw[black!45,line width=0.5pt] (p\p) -- (a\a); }
+\end{tikzpicture}\\[1mm]
+{\small (a) An arrangement}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\linewidth}\centering
+\begin{tikzpicture}[x=0.78cm,y=0.78cm]
+  \drawlayers
+  \foreach \p/\a in {1/1,3/2,5/3} { \draw[black!45,line width=0.5pt] (p\p) -- (a\a); }
+  \draw[orange!85!red,line width=1.3pt] (p2) -- (a3);
+  \draw[orange!85!red,line width=1.3pt] (p4) -- (a1);
+\end{tikzpicture}\\[1mm]
+{\small (b) After a typed swap of the agencies of p2 and p4}
+\end{minipage}
+\caption{Exclusive multi-affiliation network with two types of affiliation. Every player has exactly one agency and one
+club. The typed swap exchanges the partners of one type between two players and leaves the other layer unchanged, so that
+every portfolio size and every squad size is preserved and every arrangement can be reached.\label{fig:model}}
+\end{figure}
